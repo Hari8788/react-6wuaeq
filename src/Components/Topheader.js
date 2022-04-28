@@ -8,6 +8,8 @@ const Topheader = ({
   onChangeSelect,
   onSelectWeakness,
   onClickFilterType,
+  onSearch,
+  clickSearch,
 }) => {
   const changeType = (value) => {
     onChangeSelect(value);
@@ -22,59 +24,67 @@ const Topheader = ({
   return (
     <div className="container">
       <h1 className="heading">Pokemens</h1>
-      <nav className="navbar navbar-light bg-light">
-        <form className="form-inline">
-          <input
-            className="form-control mr-sm-2"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-          />{' '}
+      <div className="row">
+        <nav className="navbar navbar-light bg-light">
+          <div className="col-sm-4">
+            <form className="form-inline">
+              <input
+                className="form-control mr-sm-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+                onChange={(e) => onSearch(e.target.value)}
+              />{' '}
+              <button
+                className="btn btn-outline-success my-2 my-sm-0"
+                type="button"
+                onClick={() => clickSearch()}
+              >
+                Search
+              </button>
+            </form>
+          </div>
+          <div className="col-sm-3">
+            <FormSelect
+              as="select"
+              custom
+              onChange={(e) => {
+                changeType(e.target.value);
+              }}
+            >
+              {typeProps.map((type, i) => {
+                return (
+                  <option key={i} value={type}>
+                    {type}
+                  </option>
+                );
+              })}
+            </FormSelect>
+          </div>
+          <div className="col-sm-3">
+            <FormSelect
+              onChange={(e) => {
+                changeWeakness(e.target.value);
+              }}
+            >
+              {weaknessesProps.map((weaknesses, i) => {
+                return (
+                  <option key={i} value={weaknesses}>
+                    {weaknesses}
+                  </option>
+                );
+              })}
+            </FormSelect>
+          </div>
           <button
-            className="btn btn-outline-success my-2 my-sm-0"
-            type="submit"
+            type="button"
+            className="btn btn-outline-primary"
+            onClick={() => onFilterBtn()}
           >
-            Search
+            Filter
           </button>
-        </form>
-
-        <FormSelect
-          as="select"
-          custom
-          onChange={(e) => {
-            changeType(e.target.value);
-          }}
-        >
-          {typeProps.map((type, i) => {
-            return (
-              <option key={i} value={type}>
-                {type}
-              </option>
-            );
-          })}
-        </FormSelect>
-        <FormSelect
-          onChange={(e) => {
-            changeWeakness(e.target.value);
-          }}
-        >
-          {weaknessesProps.map((weaknesses, i) => {
-            return (
-              <option key={i} value={weaknesses}>
-                {weaknesses}
-              </option>
-            );
-          })}
-        </FormSelect>
-
-        <button
-          type="button"
-          className="btn btn-outline-primary"
-          onSubmit={onFilterBtn()}
-        >
-          Filter
-        </button>
-      </nav>
+        </nav>
+      </div>
     </div>
   );
 };
