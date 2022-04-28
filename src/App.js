@@ -17,6 +17,7 @@ const App = () => {
 
   const [selectedType, setSelectedType] = useState(null);
   const [selectedWeakness, setSelectedWeakness] = useState(null);
+  const [searchValue, setSearchValue] = useState(null);
 
   useEffect(() => {
     axios
@@ -72,22 +73,24 @@ const App = () => {
 
   const clickFilterType = () => {
     let filteredType = pokemonList.filter((list) => {
-      if (selectedType)
-        return list.type.some((type) => {
-          return type.indexOf(selectedType) !== -1;
-        });
+      if (selectedType || selectedWeakness)
+        var isType = selectedType ? list.type.includes(selectedType) : true;
+      var isWeakness = selectedWeakness
+        ? list.weaknesses.includes(selectedWeakness)
+        : true;
+      return isType && isWeakness;
     });
-    console.log('filteredType', filteredType);
+
+    setFilterList(filteredType);
+    // console.log('filteredType', filteredType);
   };
 
-  const clickFilterWeak = () => {
-    let filterWeakness = pokemonList.filter((list) => {
-      if (selectedWeakness)
-        return list.weaknesses.some((weaknesses) => {
-          return weaknesses.indexOf(selectedWeakness) !== -1;
-        });
+  const onClickSearch = () => {
+    var searchList = pokemonList.filter((list) => {
+      return list.name.toLowerCase().includes(searchValue.toLowerCase());
     });
-    console.log('filterWeakness', filterWeakness);
+    setFilterList(searchList);
+    // console.log('searchList', searchList);
   };
 
   return (
@@ -98,13 +101,19 @@ const App = () => {
         onChangeSelect={onChangeType}
         onSelectWeakness={onChangeWeakness}
         onClickFilterType={clickFilterType}
-        onClickFilterWeakpe={clickFilterWeak}
+        onSearch={(value) => {
+          setSearchValue(value);
+          console.log('search value', value);
+        }}
+        clickSearch={onClickSearch}
       />
-      {filterList &&
-        filterList.length > 0 &&
+      {filterList && filterList.length > 0 ? (
         filterList.map((list) => {
           return <Pokedex key={list.id} poemonData={list} />;
-        })}
+        })
+      ) : (
+        <h1>Not Found</h1>
+      )}
     </div>
   );
 };
